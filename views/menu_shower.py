@@ -90,7 +90,7 @@ class MainView(tk.Frame):
             rounds = tk.Entry(frame, width = 5)
             rounds.pack(side = tk.LEFT, padx = (0, 5))
             self.add_placeholder(rounds, '轮数')
-            button = tk.Button(frame, text = '执行', command = lambda:self.docu_controller.handle_office_button(docu_dir, rounds))
+            button = tk.Button(frame, text = '执行', command = lambda:self.docu_controller.handle_office_button(docu_dir, rounds, app_name))
             button.pack(side = tk.LEFT)
         # WPS
         def create_wps_section(parent):
@@ -109,7 +109,7 @@ class MainView(tk.Frame):
             wps_dir = tk.Entry(frame_wps_2, width = 40)
             wps_dir.pack(side = tk.LEFT, padx=(0, 5))
             self.add_placeholder(wps_dir, "请输入WPS程序路径")
-            button_wps = tk.Button(frame_wps_2, text = '执行')
+            button_wps = tk.Button(frame_wps_2, text = '执行', command = lambda:self.docu_controller.handle_wps_button(dir_wps, round_wps, wps_dir))
             button_wps.pack(side=tk.LEFT, padx=(0, 5))
         # WORD
         create_office_section(self.content, 'WORD')
