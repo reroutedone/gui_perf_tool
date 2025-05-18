@@ -1,3 +1,4 @@
+# main.py
 import tkinter as tk
 import views.menu_shower as msh
 import controllers.docu_controller as dcon
@@ -21,3 +22,4 @@ view.docu_controller = docu_controller
 
 if __name__ == '__main__':
     root.mainloop()
+ 
