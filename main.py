@@ -14,7 +14,6 @@ view.controller = controller
 # 构建界面组件 - 按照以下顺序初始化UI元素
 view.show_combo()
 view.main_label()
-view.show_screen()
 
 # 初始化文档控制器(必须在show_screen之后)
 docu_controller = dcon.DocuController(view)

@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import time
-
+from . import scr_view as scr_log
 class MainView(tk.Frame):
     def __init__(self, parent, controller):
         # 调用父类构造函数，将该 Frame 初始化为 parent 的子容器
@@ -9,6 +9,12 @@ class MainView(tk.Frame):
         self.controller = controller
         self.pack(fill=tk.BOTH, expand=True)  # Pack the main view frame
         
+        # 先创建屏幕组件
+        self.show_screen()
+        # 将屏幕Text组件传递给LoggerView
+        logger = scr_log.ScrView(self.screen)
+        self.scr = logger
+
     def main_label(self):
         frame = tk.Frame(self)
         frame.pack(expand=True)

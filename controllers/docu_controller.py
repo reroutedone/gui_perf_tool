@@ -1,5 +1,4 @@
 # docu_controller.py
-import tkinter as tk
 import subprocess
 import time
 import win32gui
@@ -11,6 +10,7 @@ import os
 import winreg
 import threading
 import queue
+from views.scr_view import log
 
 class DocuController:
     
@@ -31,8 +31,9 @@ class DocuController:
     def __init__(self, view):
         self.view = view
 
-    def scrprint(self, text):
-        self.view.screen.insert(tk.END, f"\n{text}")
+    # 使用scr_view的旧log()方法，暂时废除
+    """ def scrprint(self, text):
+        self.view.scr.log(f"\n{text}") """
 
     # 使用示例
     # 获取office部分输入
@@ -63,7 +64,7 @@ class DocuController:
                     val, _ = winreg.QueryValueEx(key, None)
                     return val
         except Exception as e:
-            self.scrprint(f"[错误] 无法从注册表获取 {app_type} 安装路径: {e}")
+            log(f"[错误] 无法从注册表获取 {app_type} 安装路径: {e}")
             return None
     def close_all_windows(self, process_name):
         for proc in psutil.process_iter(attrs=['name']):
@@ -104,7 +105,7 @@ class DocuController:
 
         results = []
         for i in range(rounds):
-            self.scrprint(f"\n第 {i+1} 轮测试: 启动 {app_type.upper()}...")
+            log(f"\n第 {i+1} 轮测试: 启动 {app_type.upper()}...")
             self.close_all_windows(process_name)
             time.sleep(2)
 
@@ -113,7 +114,7 @@ class DocuController:
                 cmd.append(doc_path)
 
             start_time = time.time()
-            self.scrprint('开始时间: %s' %start_time)
+            log('开始时间: %s' %start_time)
             elapsed = 0
             found = False
             if (app_type != 'wps'):
@@ -128,24 +129,24 @@ class DocuController:
                     elapsed = time.time() - start_time
 
                 end_time = time.time()
-                self.scrprint('结束时间: %s' %end_time)
+                log('结束时间: %s' %end_time)
                 startup_time = end_time - start_time
 
                 if found:
-                    self.scrprint("{app_type.upper()} 启动耗时: {startup_time:.2f} 秒")
+                    log(f"{app_type.upper()} 启动耗时: {startup_time:.2f} 秒")
                 else:
-                    self.scrprint(f"{app_type.upper()} 启动失败或窗口未检测到，耗时（可能超时）: {startup_time:.2f} 秒")
+                    log(f"{app_type.upper()} 启动失败或窗口未检测到，耗时（可能超时）: {startup_time:.2f} 秒")
 
                 results.append(startup_time)
                 time.sleep(1)
             else:
-                self.scrprint('当前为wps')
+                log('当前为wps')
                 absolute_doc_path = os.path.abspath(doc_path)
                 cmd = [app_path, "/prometheus", "/et", absolute_doc_path]
                 proc = subprocess.Popen(cmd, shell=False, creationflags=subprocess.CREATE_NO_WINDOW)
                 #time.sleep(1)
                 # WPS特殊处理：等待人工关闭窗口
-                self.scrprint("请手动处理WPS窗口...")
+                log("请手动处理WPS窗口...")
                 while elapsed < timeout:
                     matches = self.find_window_containing(filename)
                     if matches:
@@ -158,9 +159,9 @@ class DocuController:
                     else:
                         time.sleep(0.1)
                 end_time = time.time()
-                self.scrprint('结束时间: %s' %end_time)
+                log('结束时间: %s' %end_time)
                 startup_time = end_time - start_time
-                self.scrprint(f"{app_type.upper()} 启动耗时: {startup_time:.2f} 秒")
+                log(f"{app_type.upper()} 启动耗时: {startup_time:.2f} 秒")
                 results.append(startup_time)
         
         if app_type != 'wps':
@@ -221,10 +222,10 @@ class DocuController:
     def handle_wps_test(self, docu_dir, rounds, wps_dir):
         # 实现WPS文档测试逻辑
         if (not wps_dir or not os.path.exists (wps_dir)):
-            self.scrprint(f"[错误] 无法找到 WPS 的启动程序: {wps_dir}")
+            log(f"[错误] 无法找到 WPS 的启动程序: {wps_dir}")
             return
         if docu_dir and not os.path.exists(docu_dir):
-            self.scrprint(f"[错误] 指定文档不存在: {docu_dir}")
+            log(f"[错误] 指定文档不存在: {docu_dir}")
             return
         results = self.measure_startup_time(
             app_type = 'wps',
